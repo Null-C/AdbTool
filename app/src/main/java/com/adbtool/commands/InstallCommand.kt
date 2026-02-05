@@ -30,7 +30,7 @@ class InstallCommand : BaseCommand() {
                     return@withContext Result.failure(Exception("APK file not found"))
                 }
 
-                // Report initial progress
+                // Report initial progress - just indicate transferring state
                 onProgress(
                     TransferProgress(
                         state = TransferState.TRANSFERRING,
@@ -46,7 +46,7 @@ class InstallCommand : BaseCommand() {
 
                 val installResult = dadbClient.installApk(apkFile)
 
-                // Calculate final progress for completion
+                // Calculate speed for display after completion
                 val endTime = System.currentTimeMillis()
                 val totalTimeSeconds = (endTime - startTime) / 1000.0
                 val speed = if (totalTimeSeconds > 0) {
@@ -56,7 +56,7 @@ class InstallCommand : BaseCommand() {
                 }
 
                 if (installResult.isSuccess) {
-                    // Report final completed progress
+                    // Report completed progress with speed calculated
                     onProgress(
                         TransferProgress(
                             state = TransferState.COMPLETED,

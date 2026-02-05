@@ -32,59 +32,37 @@ fun TransferProgressDialog(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 进度条
-                LinearProgressIndicator(
-                    progress = progress.progress,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                // 进度百分比
-                Text(
-                    text = "${progress.progressPercent}%",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.align(Alignment.End)
-                )
-
-                // 已传输大小
-                Text(
-                    text = stringResource(
-                        R.string.transferred,
-                        FormatUtils.formatFileSize(progress.bytesTransferred),
-                        FormatUtils.formatFileSize(progress.totalBytes)
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                // 传输速度
-                if (progress.speed > 0) {
-                    Text(
-                        text = stringResource(
-                            R.string.speed,
-                            FormatUtils.formatSpeed(progress.speed)
-                        ),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                // 剩余时间
-                if (progress.estimatedSecondsRemaining > 0) {
-                    Text(
-                        text = stringResource(
-                            R.string.remaining,
-                            FormatUtils.formatTimeRemaining(progress.estimatedSecondsRemaining)
-                        ),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
                 // 状态信息
                 when (progress.state) {
                     TransferState.TRANSFERRING -> {
-                        Text(
-                            text = stringResource(R.string.transferring),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // 加载指示器
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp),
+                                strokeWidth = 4.dp
+                            )
+
+                            Text(
+                                text = stringResource(R.string.transferring),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+
+                            // 显示文件大小信息
+                            Text(
+                                text = stringResource(
+                                    R.string.transferred,
+                                    FormatUtils.formatFileSize(0),
+                                    FormatUtils.formatFileSize(progress.totalBytes)
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                     TransferState.COMPLETED -> {
                         Column(
@@ -105,6 +83,18 @@ fun TransferProgressDialog(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
+
+                            // 传输速度（安装完成后显示）
+                            if (progress.speed > 0) {
+                                Text(
+                                    text = stringResource(
+                                        R.string.speed,
+                                        FormatUtils.formatSpeed(progress.speed)
+                                    ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(top = 8.dp)
+                                )
+                            }
                         }
                     }
                     TransferState.ERROR -> {
@@ -115,6 +105,17 @@ fun TransferProgressDialog(
                         )
                     }
                     else -> {}
+                }
+
+                // 剩余时间
+                if (progress.estimatedSecondsRemaining > 0) {
+                    Text(
+                        text = stringResource(
+                            R.string.remaining,
+                            FormatUtils.formatTimeRemaining(progress.estimatedSecondsRemaining)
+                        ),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         },
